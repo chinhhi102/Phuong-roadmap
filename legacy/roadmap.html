@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Business Analysis Roadmap</title>
+<style>
+  :root{
+    --bg:#f5f7fb; --card:#ffffff; --text:#1c2430; --muted:#5a6b82;
+    --border:#e3e8f0; --accent:#3b6cf6; --accent-soft:#e8effe;
+    --p1:#3b6cf6; --p2:#12a594; --p3:#f59e0b; --p4:#e84393;
+    --track:#e7ecf4; --done:#12a594; --shadow:0 6px 24px rgba(28,36,48,.07);
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#0e1420; --card:#161d2b; --text:#e7edf6; --muted:#93a3ba;
+      --border:#26314a; --accent:#5b86ff; --accent-soft:#1b2740;
+      --track:#232f47; --shadow:0 6px 24px rgba(0,0,0,.35);
+    }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.55;padding:0 16px 80px}
+  .wrap{max-width:920px;margin:0 auto}
+  header{padding:40px 0 8px;text-align:center}
+  h1{font-size:1.9rem;margin:0 0 6px}
+  .sub{color:var(--muted);font-size:1rem;margin:0 auto;max-width:620px}
+  .badge{display:inline-block;background:var(--accent-soft);color:var(--accent);
+    border-radius:999px;padding:4px 12px;font-size:.8rem;font-weight:600;margin-bottom:14px}
+
+  .overall{background:var(--card);border:1px solid var(--border);border-radius:16px;
+    padding:20px 22px;margin:22px 0;box-shadow:var(--shadow)}
+  .overall .top{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:6px}
+  .overall .pct{font-size:1.6rem;font-weight:700}
+  .track{height:12px;background:var(--track);border-radius:999px;overflow:hidden;margin-top:12px}
+  .fill{height:100%;width:0;background:linear-gradient(90deg,var(--p1),var(--p2));
+    border-radius:999px;transition:width .4s ease}
+  .meta{color:var(--muted);font-size:.85rem;margin-top:10px}
+
+  .phase{background:var(--card);border:1px solid var(--border);border-radius:16px;
+    margin:16px 0;box-shadow:var(--shadow);overflow:hidden}
+  .phead{display:flex;align-items:center;gap:14px;padding:16px 20px;cursor:pointer;user-select:none}
+  .dot{width:12px;height:12px;border-radius:50%;flex:none}
+  .ptitle{font-weight:700;font-size:1.08rem;flex:1}
+  .ptitle small{display:block;font-weight:400;color:var(--muted);font-size:.82rem;margin-top:2px}
+  .pcount{color:var(--muted);font-size:.85rem;white-space:nowrap}
+  .chev{transition:transform .25s ease;color:var(--muted)}
+  .phase.collapsed .chev{transform:rotate(-90deg)}
+  .plist{padding:0 20px 8px;display:block}
+  .phase.collapsed .plist{display:none}
+  .pbar{height:6px;background:var(--track);border-radius:0}
+  .pbar > i{display:block;height:100%;width:0;transition:width .4s ease}
+
+  label.item{display:flex;align-items:flex-start;gap:12px;padding:11px 6px;
+    border-top:1px solid var(--border);cursor:pointer}
+  label.item:first-child{border-top:none}
+  input[type=checkbox]{appearance:none;-webkit-appearance:none;width:20px;height:20px;
+    border:2px solid var(--border);border-radius:6px;flex:none;margin-top:1px;cursor:pointer;
+    position:relative;transition:.15s}
+  input[type=checkbox]:checked{background:var(--done);border-color:var(--done)}
+  input[type=checkbox]:checked::after{content:"";position:absolute;left:6px;top:2px;
+    width:5px;height:10px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg)}
+  .itxt{flex:1}
+  .itxt .star{color:var(--p3)}
+  label.item.done .itxt{color:var(--muted);text-decoration:line-through}
+
+  .section-title{font-size:1.2rem;margin:34px 0 4px}
+  .section-sub{color:var(--muted);margin:0 0 14px;font-size:.9rem}
+  table{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--border);
+    border-radius:14px;overflow:hidden;box-shadow:var(--shadow);font-size:.9rem}
+  th,td{text-align:left;padding:10px 14px;border-top:1px solid var(--border)}
+  th{background:var(--accent-soft);color:var(--text);font-weight:600;border-top:none}
+  .scroll{overflow-x:auto}
+
+  .links{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+  .links a{background:var(--card);border:1px solid var(--border);border-radius:10px;
+    padding:9px 14px;text-decoration:none;color:var(--text);font-size:.88rem;font-weight:500;
+    box-shadow:var(--shadow)}
+  .links a:hover{border-color:var(--accent);color:var(--accent)}
+
+  .toolbar{display:flex;justify-content:center;gap:10px;margin:16px 0}
+  .btn{background:transparent;border:1px solid var(--border);color:var(--muted);
+    border-radius:8px;padding:6px 14px;font-size:.82rem;cursor:pointer}
+  .btn:hover{border-color:var(--accent);color:var(--accent)}
+  footer{text-align:center;color:var(--muted);font-size:.8rem;margin-top:40px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="badge">Personalized for an ERP / MISA implementer → BA</div>
+    <h1>🎓 My Business Analysis Roadmap</h1>
+    <p class="sub">Step-by-step, one concept at a time. Check off each lesson — your progress saves automatically in this browser.</p>
+  </header>
+
+  <div class="overall">
+    <div class="top">
+      <div><strong>Overall progress</strong></div>
+      <div class="pct" id="pct">0%</div>
+    </div>
+    <div class="track"><div class="fill" id="fill"></div></div>
+    <div class="meta" id="meta">0 of 0 lessons complete</div>
+  </div>
+
+  <div id="phases"></div>
+
+  <div class="toolbar">
+    <button class="btn" id="expandAll">Expand all</button>
+    <button class="btn" id="collapseAll">Collapse all</button>
+    <button class="btn" id="reset">Reset progress</button>
+  </div>
+
+  <h2 class="section-title">🗓️ Suggested weekly schedule</h2>
+  <p class="section-sub">Based on 4–6 hrs/day. Adjust freely — consistency beats speed.</p>
+  <div class="scroll">
+    <table>
+      <thead><tr><th>Week</th><th>Phase</th><th>Main focus</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>Phase 1</td><td>BA mindset, SDLC role, requirement types</td></tr>
+        <tr><td>2</td><td>Phase 1</td><td>Elicitation, stakeholders, core docs, Agile vs Waterfall</td></tr>
+        <tr><td>3</td><td>Phase 2</td><td>BABOK overview + BPMN process modeling</td></tr>
+        <tr><td>4</td><td>Phase 2</td><td>Use cases/UML + user stories & acceptance criteria</td></tr>
+        <tr><td>5</td><td>Phase 2</td><td>Wireframing (Figma) + data models (ERD)</td></tr>
+        <tr><td>6</td><td>Phase 2</td><td>SQL for BAs + Agile/Scrum + Jira/Confluence</td></tr>
+        <tr><td>7</td><td>Phase 3</td><td>Pick project, vision, stakeholders, scope</td></tr>
+        <tr><td>8</td><td>Phase 3</td><td>As-Is & To-Be process maps + BRD</td></tr>
+        <tr><td>9</td><td>Phase 3</td><td>Backlog (epics/user stories) + wireframes</td></tr>
+        <tr><td>10</td><td>Phase 3</td><td>Data/report specs + package portfolio</td></tr>
+        <tr><td>11</td><td>Phase 4</td><td>Resume, LinkedIn, portfolio pitch</td></tr>
+        <tr><td>12</td><td>Phase 4</td><td>Interview practice + mock interview</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2 class="section-title">📚 Detailed guides</h2>
+  <p class="section-sub">Open the full write-up for each part.</p>
+  <div class="links">
+    <a href="docs/00-overview.md">Overview</a>
+    <a href="docs/phase-1-fundamentals.md">Phase 1</a>
+    <a href="docs/phase-2-intermediate.md">Phase 2</a>
+    <a href="docs/phase-3-portfolio.md">Phase 3</a>
+    <a href="docs/phase-4-interview.md">Phase 4</a>
+    <a href="docs/glossary.md">Glossary</a>
+    <a href="docs/resources.md">Resources</a>
+    <a href="docs/progress-tracker.md">Progress tracker</a>
+  </div>
+
+  <footer>Progress is stored locally in your browser (localStorage). It stays private to this device.</footer>
+</div>
+
+<script>
+const DATA = [
+  { key:"p1", title:"Phase 1 — Core Fundamentals", sub:"Think like a BA (the 80/20)", color:"var(--p1)", items:[
+    ["L1 · BA Mindset: Problem vs. Solution", true],
+    ["L2 · What a BA does across the SDLC", false],
+    ["L3 · Four types of requirements", false],
+    ["L4 · Elicitation techniques", false],
+    ["L5 · Stakeholder analysis (Power/Interest, RACI)", false],
+    ["L6 · Core documents (BRD / FRD / User Story)", false],
+    ["L7 · Agile vs. Waterfall", false],
+    ["L8 · Documentation & traceability (RTM)", false],
+  ]},
+  { key:"p2", title:"Phase 2 — Intermediate Application", sub:"Frameworks & hands-on tools", color:"var(--p2)", items:[
+    ["L1 · BABOK & 6 knowledge areas", false],
+    ["L2 · BPMN process modeling", true],
+    ["L3 · Use cases & UML", false],
+    ["L4 · User stories + acceptance criteria (Gherkin)", true],
+    ["L5 · Wireframing (Figma)", false],
+    ["L6 · Data model (ERD)", false],
+    ["L7 · SQL for Business Analysts", false],
+    ["L8 · Agile & Scrum in depth", false],
+    ["L9 · Jira & Confluence", false],
+    ["L10 · Prioritization (MoSCoW) & gap analysis", false],
+  ]},
+  { key:"p3", title:"Phase 3 — Portfolio & Projects", sub:"Build resume-worthy proof of work", color:"var(--p3)", items:[
+    ["Step 1 · Project vision / business case", false],
+    ["Step 2 · Stakeholders + RACI + scope", false],
+    ["Step 3 · Elicitation plan + interview notes", false],
+    ["Step 4 · As-Is process map (BPMN)", false],
+    ["Step 5 · To-Be process map (BPMN)", false],
+    ["Step 6 · Business Requirements Document (BRD)", false],
+    ["Step 7 · Product backlog (epics/stories/criteria)", false],
+    ["Step 8 · Wireframes / prototype (Figma)", false],
+    ["Step 9 · ERD + report spec + SQL", false],
+    ["Step 10 · Package & publish portfolio", false],
+  ]},
+  { key:"p4", title:"Phase 4 — Interview & Job Readiness", sub:"Land the role", color:"var(--p4)", items:[
+    ["Resume tailored for BA", false],
+    ["LinkedIn optimized", false],
+    ["Portfolio pitch rehearsed", false],
+    ["10 conceptual answers solid", false],
+    ["5 scenario answers structured", false],
+    ["6 STAR behavioral stories written", false],
+    ["Certification chosen (ECBA?) & started", false],
+    ["Passed a full mock interview", false],
+  ]},
+];
+
+const STORE = "ba_roadmap_progress_v1";
+let saved = {};
+try { saved = JSON.parse(localStorage.getItem(STORE) || "{}"); } catch(e){ saved = {}; }
+function save(){ try{ localStorage.setItem(STORE, JSON.stringify(saved)); }catch(e){} }
+
+const phasesEl = document.getElementById("phases");
+
+DATA.forEach(phase=>{
+  const wrap = document.createElement("div");
+  wrap.className = "phase";
+  wrap.dataset.key = phase.key;
+
+  const head = document.createElement("div");
+  head.className = "phead";
+  head.innerHTML = `
+    <span class="dot" style="background:${phase.color}"></span>
+    <span class="ptitle">${phase.title}<small>${phase.sub}</small></span>
+    <span class="pcount" data-count></span>
+    <span class="chev">▾</span>`;
+  head.addEventListener("click", ()=> wrap.classList.toggle("collapsed"));
+  wrap.appendChild(head);
+
+  const bar = document.createElement("div");
+  bar.className = "pbar";
+  const barFill = document.createElement("i");
+  barFill.style.background = phase.color;
+  bar.appendChild(barFill);
+  wrap.appendChild(bar);
+
+  const list = document.createElement("div");
+  list.className = "plist";
+  phase.items.forEach((it, i)=>{
+    const id = phase.key + "_" + i;
+    const [text, star] = it;
+    const label = document.createElement("label");
+    label.className = "item";
+    const cb = document.createElement("input");
+    cb.type = "checkbox";
+    cb.dataset.id = id;
+    cb.checked = !!saved[id];
+    if(cb.checked) label.classList.add("done");
+    cb.addEventListener("change", ()=>{
+      saved[id] = cb.checked;
+      label.classList.toggle("done", cb.checked);
+      save(); render();
+    });
+    const span = document.createElement("span");
+    span.className = "itxt";
+    span.innerHTML = text + (star ? ' <span class="star" title="High priority">★</span>' : "");
+    label.appendChild(cb);
+    label.appendChild(span);
+    list.appendChild(label);
+  });
+  wrap.appendChild(list);
+  phasesEl.appendChild(wrap);
+});
+
+function render(){
+  let total=0, done=0;
+  DATA.forEach(phase=>{
+    const wrap = phasesEl.querySelector(`.phase[data-key="${phase.key}"]`);
+    let pt=phase.items.length, pd=0;
+    phase.items.forEach((_,i)=>{ if(saved[phase.key+"_"+i]) pd++; });
+    total+=pt; done+=pd;
+    wrap.querySelector("[data-count]").textContent = `${pd}/${pt}`;
+    wrap.querySelector(".pbar > i").style.width = pt? (pd/pt*100)+"%" : "0";
+  });
+  const pct = total? Math.round(done/total*100) : 0;
+  document.getElementById("pct").textContent = pct+"%";
+  document.getElementById("fill").style.width = pct+"%";
+  document.getElementById("meta").textContent = `${done} of ${total} lessons complete`;
+}
+render();
+
+document.getElementById("expandAll").onclick = ()=>
+  document.querySelectorAll(".phase").forEach(p=>p.classList.remove("collapsed"));
+document.getElementById("collapseAll").onclick = ()=>
+  document.querySelectorAll(".phase").forEach(p=>p.classList.add("collapsed"));
+document.getElementById("reset").onclick = ()=>{
+  if(confirm("Reset all progress? This cannot be undone.")){
+    saved = {}; save();
+    document.querySelectorAll('input[type=checkbox]').forEach(cb=>{
+      cb.checked=false; cb.closest("label").classList.remove("done");
+    });
+    render();
+  }
+};
+</script>
+</body>
+</html>
