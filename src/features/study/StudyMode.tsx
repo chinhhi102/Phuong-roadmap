@@ -25,6 +25,7 @@ import { PowerUpButton, PowerUpOverlay } from './PowerUp'
 import { ChatPanel } from '@/features/chat/ChatPanel'
 import { BuzzOverlay } from '@/features/chat/BuzzOverlay'
 import { useBuzzWatcher } from '@/features/chat/useBuzzWatcher'
+import { useMessageWatcher } from '@/features/chat/useMessageWatcher'
 import { useChat } from '@/features/chat/useChat'
 import { usePomodoro } from './usePomodoro'
 import { PomodoroTimer } from './PomodoroTimer'
@@ -56,6 +57,7 @@ export function StudyMode() {
 
   // --- chat + buzz ---------------------------------------------------------
   useBuzzWatcher()
+  useMessageWatcher()
   const chat = useChat()
   const chatRole = useSettingsStore((s) => s.role)
   const chatReadTs = useStudyStore((s) => s.chatReadTs)

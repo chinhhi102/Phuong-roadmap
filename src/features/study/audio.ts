@@ -90,6 +90,14 @@ class AudioEngine {
     notes.forEach((f, i) => this.blip(t + i * 0.12, f, 0.35, 0.12))
   }
 
+  /** A gentle two-note ding when a new chat message arrives. */
+  notify() {
+    if (!this.ensure()) return
+    const t = this.ctx!.currentTime
+    this.blip(t, 783.99, 0.14, 0.1) // G5
+    this.blip(t + 0.09, 1046.5, 0.18, 0.1) // C6
+  }
+
   /** An attention-grabbing double buzz (when the other person buzzes you). */
   buzz() {
     const ctx = this.ensure()
