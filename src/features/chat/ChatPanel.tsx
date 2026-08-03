@@ -10,11 +10,11 @@ import { useEffect, useRef, useState } from 'react'
 import { Send, Zap, GraduationCap, UserCog, CheckCircle2, ListChecks, FileText, BookOpen, StickyNote } from 'lucide-react'
 import { useSettingsStore } from '@/store/settingsStore'
 import { useStudyStore } from '@/store/studyStore'
-import { useProgressStore } from '@/store/progressStore'
-import { cn, roleName } from '@/lib/utils'
+import { cn, roleName, displayName } from '@/lib/utils'
 import { isFirebaseConfigured } from '@/services/firebase'
 import { chatEngine } from './chatSync'
 import { useChat } from './useChat'
+import { useLearnerProgress } from './useLearnerProgress'
 import type { ActivityEntry, Author } from '@/types'
 
 function hhmm(ts: number): string {
@@ -30,40 +30,103 @@ const KIND_ICON: Record<ActivityEntry['kind'], typeof BookOpen> = {
   note: StickyNote,
 }
 
+function relTime(ts: number): string {
+  const s = Math.max(0, Math.floor((Date.now() - ts) / 1000))
+  if (s < 10) return 'just now'
+  if (s < 60) return `${s}s ago`
+  const m = Math.floor(s / 60)
+  if (m < 60) return `${m}m ago`
+  const h = Math.floor(m / 60)
+  if (h < 24) return `${h}h ago`
+  return `${Math.floor(h / 24)}d ago`
+}
+
+function Tile({ n, l }: { n: string; l: string }) {
+  return (
+    <div className="rounded-lg bg-[hsl(var(--card))] py-1.5 text-center">
+      <p className="text-sm font-bold text-[hsl(var(--foreground))]">{n}</p>
+      <p className="text-[9px] uppercase tracking-wide text-[hsl(var(--muted-foreground))]">{l}</p>
+    </div>
+  )
+}
+
+/** Live view of Phương's real progress, synced from her device via Firebase. */
 function LearnerWork() {
-  const progress = useProgressStore((s) => s.progress)
-  const activity = useProgressStore((s) => s.activity)
-  const values = Object.values(progress)
-  const completed = values.filter((p) => p.completed).length
-  const quizzes = values.filter((p) => p.quiz).length
-  const assignments = values.filter((p) => p.submission).length
-  const recent = activity.slice(0, 6)
+  const snap = useLearnerProgress()
+
+  if (!snap) {
+    return (
+      <div className="mb-2 rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--muted)/0.5)] p-3 text-center">
+        <p className="text-xs font-bold text-[hsl(var(--foreground))]">Phương's progress</p>
+        <p className="mt-1 text-pretty text-[11px] text-[hsl(var(--muted-foreground))]">
+          Waiting for her data… it shows up here the moment Phương opens the app. 🌸
+        </p>
+      </div>
+    )
+  }
+
+  const activity = snap.activity ?? []
+  const modules = snap.modules ?? []
+  const pct = snap.totalLessons ? Math.round((snap.lessonsCompleted / snap.totalLessons) * 100) : 0
 
   return (
     <div className="mb-2 rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--muted)/0.5)] p-2.5">
-      <p className="mb-2 flex items-center gap-1.5 text-xs font-bold text-[hsl(var(--foreground))]">
-        <UserCog className="h-3.5 w-3.5 text-[hsl(var(--accent))]" /> Phương's work
-      </p>
-      <div className="grid grid-cols-3 gap-1.5 text-center">
-        {[
-          { n: completed, l: 'Lessons' },
-          { n: quizzes, l: 'Quizzes' },
-          { n: assignments, l: 'Assignments' },
-        ].map((s) => (
-          <div key={s.l} className="rounded-lg bg-[hsl(var(--card))] py-1.5">
-            <p className="text-sm font-bold text-[hsl(var(--foreground))]">{s.n}</p>
-            <p className="text-[9px] uppercase tracking-wide text-[hsl(var(--muted-foreground))]">{s.l}</p>
-          </div>
-        ))}
+      <div className="mb-1.5 flex items-center justify-between gap-2">
+        <p className="flex items-center gap-1.5 text-xs font-bold text-[hsl(var(--foreground))]">
+          <UserCog className="h-3.5 w-3.5 text-[hsl(var(--accent))]" /> {displayName(snap.name)}'s progress
+        </p>
+        <span className="shrink-0 text-[9px] text-[hsl(var(--muted-foreground))]">⟳ {relTime(snap.updatedAt)}</span>
       </div>
-      <details className="mt-2 group">
+
+      {/* Overall completion */}
+      <div className="mb-2">
+        <div className="mb-1 flex items-center justify-between text-[10px]">
+          <span className="text-[hsl(var(--muted-foreground))]">Overall</span>
+          <span className="font-semibold text-[hsl(var(--foreground))]">{pct}% · {snap.lessonsCompleted}/{snap.totalLessons} lessons</span>
+        </div>
+        <div className="h-1.5 w-full overflow-hidden rounded-full bg-[hsl(var(--muted))]">
+          <div className="h-full rounded-full bg-[hsl(var(--primary))] transition-[width] duration-500" style={{ width: `${pct}%` }} />
+        </div>
+      </div>
+
+      {/* Stat tiles */}
+      <div className="grid grid-cols-4 gap-1.5">
+        <Tile n={`${snap.hours}h`} l="Studied" />
+        <Tile n={`${snap.streak}`} l="Streak" />
+        <Tile n={`${snap.quizzesPassed}`} l="Quizzes" />
+        <Tile n={`${snap.assignmentsSubmitted}`} l="Assign." />
+      </div>
+
+      {/* Per-module progress */}
+      <details className="mt-2">
+        <summary className="cursor-pointer list-none text-[11px] font-semibold text-[hsl(var(--primary))]">▸ Modules</summary>
+        <ul className="mt-1.5 space-y-1.5">
+          {modules.map((m) => {
+            const mp = m.total ? Math.round((m.done / m.total) * 100) : 0
+            return (
+              <li key={m.id} className="text-[11px]">
+                <div className="mb-0.5 flex items-center justify-between gap-2 text-[hsl(var(--muted-foreground))]">
+                  <span className="truncate">{m.icon} {m.title}</span>
+                  <span className="shrink-0">{m.done}/{m.total}</span>
+                </div>
+                <div className="h-1 w-full overflow-hidden rounded-full bg-[hsl(var(--muted))]">
+                  <div className="h-full rounded-full bg-[hsl(var(--primary)/0.7)]" style={{ width: `${mp}%` }} />
+                </div>
+              </li>
+            )
+          })}
+        </ul>
+      </details>
+
+      {/* Recent activity */}
+      <details className="mt-1.5">
         <summary className="cursor-pointer list-none text-[11px] font-semibold text-[hsl(var(--primary))]">
-          ▸ Recent activity{recent.length ? ` (${recent.length})` : ''}
+          ▸ Recent activity{activity.length ? ` (${activity.length})` : ''}
         </summary>
-        {recent.length > 0 ? (
+        {activity.length > 0 ? (
           <ul className="mt-1.5 space-y-1">
-            {recent.map((a) => {
-              const Icon = KIND_ICON[a.kind]
+            {activity.slice(0, 12).map((a) => {
+              const Icon = KIND_ICON[a.kind as ActivityEntry['kind']] ?? BookOpen
               return (
                 <li key={a.id} className="flex items-start gap-1.5 text-[11px] text-[hsl(var(--muted-foreground))]">
                   <Icon className="mt-0.5 h-3 w-3 shrink-0 text-[hsl(var(--primary))]" />
