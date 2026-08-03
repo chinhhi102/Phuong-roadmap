@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { Loader2, X } from 'lucide-react'
 import { Sidebar } from './Sidebar'
 import { Topbar } from './Topbar'
+import { StudyMode } from '@/features/study/StudyMode'
 
 function RouteFallback() {
   return (
@@ -60,6 +61,10 @@ export function AppShell() {
           </div>
         </main>
       </div>
+
+      {/* Cozy pink study companion — global, so the dock, companion, and any
+          playing ambience persist across every page and navigation. */}
+      <StudyMode />
     </div>
   )
 }

@@ -89,6 +89,12 @@ export function NoteEditor({ lessonId, lessonTitle }: { lessonId: string; lesson
           ))}
 
         <div className="ml-auto flex items-center gap-2">
+          <span
+            className="hidden items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary sm:inline-flex"
+            title="Shared — both the learner and the instructor see these notes"
+          >
+            👥 Shared
+          </span>
           <span className="flex items-center gap-1 text-[11px] text-muted-foreground">
             {saving ? (
               <>

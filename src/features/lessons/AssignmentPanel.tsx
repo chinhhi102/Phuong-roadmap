@@ -80,8 +80,8 @@ export function AssignmentPanel({ assignment, lessonId }: { assignment: Assignme
 
       {/* Review status */}
       {submission?.score != null && (
-        <Callout tone={submission.approved ? 'success' : 'info'} title={submission.approved ? 'Approved by instructor' : 'Reviewed'}>
-          Instructor score: <strong>{submission.score}%</strong>
+        <Callout tone={submission.approved ? 'success' : 'info'} title={submission.approved ? 'Approved by Chính' : 'Reviewed'}>
+          Chính's score: <strong>{submission.score}%</strong>
           {submission.approved && ' — lesson signed off. Great work!'}
         </Callout>
       )}
@@ -90,7 +90,7 @@ export function AssignmentPanel({ assignment, lessonId }: { assignment: Assignme
       {role === 'instructor' && submission && (
         <div className="rounded-lg border border-accent/40 bg-accent/5 p-4">
           <p className="mb-2 flex items-center gap-2 font-medium">
-            <ShieldCheck className="h-4 w-4 text-accent" /> Instructor review
+            <ShieldCheck className="h-4 w-4 text-accent" /> Chính's review
           </p>
           <label className="text-sm text-muted-foreground">Score: {reviewScore}%</label>
           <input

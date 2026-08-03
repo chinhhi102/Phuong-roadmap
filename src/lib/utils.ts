@@ -39,6 +39,18 @@ export function formatDuration(minutes: number): string {
   return m ? `${h}h ${m}m` : `${h}h`
 }
 
+/** Display name for a role (the couple studying together). */
+export function roleName(role: 'learner' | 'instructor'): string {
+  return role === 'instructor' ? 'Chính' : 'Phương'
+}
+
+/** Her cozy display name: Vietnamese given name (last part), fallback to Phương. */
+export function displayName(name: string): string {
+  const t = (name ?? '').trim()
+  if (!t || t.toLowerCase() === 'future business analyst') return 'Phương'
+  return t.split(/\s+/).pop() as string
+}
+
 /** Difficulty → color token classes. */
 export function difficultyColor(d: string): string {
   switch (d) {

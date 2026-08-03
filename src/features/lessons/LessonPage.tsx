@@ -23,6 +23,7 @@ import { NoteEditor } from '@/features/notes/NoteEditor'
 import { AssignmentPanel } from './AssignmentPanel'
 import { Discussion } from './Discussion'
 import { ScoreBreakdown } from './ScoreBreakdown'
+import { useStudyStore } from '@/store/studyStore'
 import type { ResourceType } from '@/types'
 
 const RESOURCE_ICON: Record<ResourceType, typeof BookOpen> = {
@@ -48,6 +49,7 @@ export default function LessonPage() {
   const toggleFavorite = useProgressStore((s) => s.toggleFavorite)
   const bookmarked = useProgressStore((s) => s.bookmarks.includes(lessonId))
   const favorited = useProgressStore((s) => s.favorites.includes(lessonId))
+  const pinkPage = useStudyStore((s) => s.pinkPage)
 
   const [tab, setTab] = useState('learn')
 
@@ -114,9 +116,10 @@ export default function LessonPage() {
   ]
 
   return (
-    // key forces a fresh subtree per lesson so note/quiz/assignment local
-    // state resets correctly when navigating between lessons.
-    <div ref={topRef} key={lesson.id} className="animate-fade-in">
+    <>
+    {/* key forces a fresh subtree per lesson so note/quiz/assignment local
+        state resets correctly when navigating between lessons. */}
+    <div ref={topRef} key={lesson.id} className={cn('animate-fade-in', pinkPage && 'study-scope study-page')}>
       {/* Breadcrumb */}
       <div className="mb-2 flex items-center gap-2 text-xs text-muted-foreground">
         <Link to="/roadmap" className="hover:text-foreground">Roadmap</Link>
@@ -202,7 +205,7 @@ export default function LessonPage() {
               {practiceQuiz && (
                 <section>
                   <h3 className="mb-1 text-lg font-semibold">🧠 Practice quiz</h3>
-                  <p className="mb-3 text-sm text-muted-foreground">{practiceQuiz.questions.length} questions · pass mark {practiceQuiz.passingScore}%. Switch to the Instructor role to grade open answers.</p>
+                  <p className="mb-3 text-sm text-muted-foreground">{practiceQuiz.questions.length} questions · pass mark {practiceQuiz.passingScore}%. Switch to Chính to grade open answers.</p>
                   <QuizRunner quiz={practiceQuiz} lessonId={lesson.id} lessonTitle={lesson.title} />
                 </section>
               )}
@@ -295,5 +298,6 @@ export default function LessonPage() {
         )}
       </div>
     </div>
+    </>
   )
 }

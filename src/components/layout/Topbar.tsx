@@ -54,13 +54,13 @@ export function Topbar({ onMenu }: { onMenu: () => void }) {
           onClick={() => setRole('learner')}
           className={cn('flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium', role === 'learner' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground')}
         >
-          <GraduationCap className="h-3.5 w-3.5" /> Learner
+          <GraduationCap className="h-3.5 w-3.5" /> Phương
         </button>
         <button
           onClick={() => setRole('instructor')}
           className={cn('flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium', role === 'instructor' ? 'bg-accent text-accent-foreground' : 'text-muted-foreground')}
         >
-          <UserCog className="h-3.5 w-3.5" /> Instructor
+          <UserCog className="h-3.5 w-3.5" /> Chính
         </button>
       </div>
 

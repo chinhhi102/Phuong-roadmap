@@ -85,13 +85,13 @@ export default function SettingsPage() {
             onClick={() => setRole('learner')}
             className={cn('flex flex-1 items-center justify-center gap-2 rounded-lg border px-4 py-3 text-sm font-medium', role === 'learner' ? 'border-primary bg-primary/10 text-primary' : 'border-border text-muted-foreground hover:bg-muted')}
           >
-            <GraduationCap className="h-4 w-4" /> Learner
+            <GraduationCap className="h-4 w-4" /> Phương
           </button>
           <button
             onClick={() => setRole('instructor')}
             className={cn('flex flex-1 items-center justify-center gap-2 rounded-lg border px-4 py-3 text-sm font-medium', role === 'instructor' ? 'border-accent bg-accent/10 text-accent' : 'border-border text-muted-foreground hover:bg-muted')}
           >
-            <UserCog className="h-4 w-4" /> Instructor
+            <UserCog className="h-4 w-4" /> Chính
           </button>
         </CardContent>
       </Card>

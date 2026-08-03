@@ -25,6 +25,8 @@ export const STORAGE_KEYS = {
   progress: 'ba.progress',
   notes: 'ba.notes',
   exams: 'ba.exams',
+  study: 'ba.study',
+  chat: 'ba.chat',
 } as const
 
 export type StorageKey = (typeof STORAGE_KEYS)[keyof typeof STORAGE_KEYS]

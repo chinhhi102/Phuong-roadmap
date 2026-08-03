@@ -11,7 +11,7 @@ import { useSettingsStore } from '@/store/settingsStore'
 import { useExamScores } from '@/store/examStore'
 import { computeOverall } from '@/lib/scoring'
 import { computeStreak, totalHoursStudied, findCurrentLesson } from '@/lib/selectors'
-import { competencyLevel, formatDateTime, cn } from '@/lib/utils'
+import { competencyLevel, formatDateTime, cn, displayName } from '@/lib/utils'
 import { Card, CardContent } from '@/components/ui/Card'
 import { Progress, ScoreRing } from '@/components/ui/Progress'
 import { Button } from '@/components/ui/Button'
@@ -62,7 +62,7 @@ export default function DashboardPage() {
     <div className="animate-fade-in space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Welcome back, {name.split(' ')[0]} 👋</h1>
+          <h1 className="text-2xl font-bold tracking-tight">Welcome back, {displayName(name)} 👋</h1>
           <p className="text-sm text-muted-foreground">
             You're <span className="font-semibold text-foreground">{competencyLevel(overall.averageScore)}</span> level · {overall.completionPct}% through the course.
           </p>

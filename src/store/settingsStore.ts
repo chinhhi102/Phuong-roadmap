@@ -22,9 +22,9 @@ interface SettingsState {
 export const useSettingsStore = create<SettingsState>()(
   persist(
     (set, get) => ({
-      theme: 'dark',
+      theme: 'light',
       role: 'learner',
-      learnerName: 'Future Business Analyst',
+      learnerName: 'Phương',
       sidebarCollapsed: false,
 
       setTheme: (theme) => {

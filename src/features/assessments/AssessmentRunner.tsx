@@ -74,8 +74,8 @@ export function AssessmentRunner({ questions, passingScore, attempt, role, kind,
       )}
 
       {submitted && role === 'instructor' && (
-        <Callout tone="tip" title="Instructor grading">
-          You're viewing this finished {label} as the <strong>instructor</strong>. Use the <strong>Correct / Incorrect</strong> controls under each question to grade — especially the open (short-answer) ones — and the score updates live.
+        <Callout tone="tip" title="Chính's grading">
+          You're viewing this finished {label} as <strong>Chính</strong>. Use the <strong>Correct / Incorrect</strong> controls under each question to grade — especially the open (short-answer) ones — and the score updates live.
         </Callout>
       )}
 
