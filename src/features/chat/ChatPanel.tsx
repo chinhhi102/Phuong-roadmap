@@ -12,6 +12,7 @@ import { useSettingsStore } from '@/store/settingsStore'
 import { useStudyStore } from '@/store/studyStore'
 import { useProgressStore } from '@/store/progressStore'
 import { cn, roleName } from '@/lib/utils'
+import { isFirebaseConfigured } from '@/services/firebase'
 import { chatEngine } from './chatSync'
 import { useChat } from './useChat'
 import type { ActivityEntry, Author } from '@/types'
@@ -125,7 +126,18 @@ export function ChatPanel() {
     <div className="flex h-full min-h-0 flex-col">
       {/* Identity switch */}
       <div className="mb-2 shrink-0">
-        <p className="mb-1 text-[10px] uppercase tracking-wide text-[hsl(var(--muted-foreground))]">You are chatting as</p>
+        <div className="mb-1 flex items-center justify-between gap-2">
+          <p className="text-[10px] uppercase tracking-wide text-[hsl(var(--muted-foreground))]">You are chatting as</p>
+          <span
+            className={cn(
+              'rounded-full px-2 py-0.5 text-[9px] font-semibold',
+              isFirebaseConfigured() ? 'bg-[hsl(var(--success)/0.15)] text-[hsl(var(--success))]' : 'bg-[hsl(var(--muted))] text-[hsl(var(--muted-foreground))]',
+            )}
+            title={isFirebaseConfigured() ? 'Messages sync live across devices' : 'Chat is stored only on this device until Firebase is set up'}
+          >
+            {isFirebaseConfigured() ? '🌐 Live sync' : '🔒 This device only'}
+          </span>
+        </div>
         <div className="flex gap-1 rounded-xl border border-[hsl(var(--border))] p-1">
           {roleBtn('learner', 'Phương', GraduationCap)}
           {roleBtn('instructor', 'Chính', UserCog)}

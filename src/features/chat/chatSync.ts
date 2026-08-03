@@ -12,7 +12,9 @@
 // from both sides survive.
 // ============================================================================
 
+import { ref, query, limitToLast, onValue, push } from 'firebase/database'
 import { STORAGE_KEYS, activeStore } from '@/services/storage'
+import { getDb, isFirebaseConfigured, CHAT_ROOM_ID } from '@/services/firebase'
 import { uid } from '@/lib/utils'
 import type { Author } from '@/types'
 
@@ -73,7 +75,15 @@ function signature(d: ChatData): string {
 
 type Listener = (d: ChatData) => void
 
-class ChatEngine {
+export interface ChatEngineApi {
+  subscribe(fn: Listener): () => void
+  get(): ChatData
+  send(from: Author, text: string): Promise<void> | void
+  buzz(from: Author): Promise<void> | void
+}
+
+/** On-device engine (localStorage + polling). Syncs only across same-browser tabs. */
+class LocalChatEngine implements ChatEngineApi {
   private data: ChatData = empty()
   private sig = signature(this.data)
   private listeners = new Set<Listener>()
@@ -144,4 +154,69 @@ class ChatEngine {
   }
 }
 
-export const chatEngine = new ChatEngine()
+/** Firebase Realtime Database engine — true cross-device, cross-internet sync. */
+class FirebaseChatEngine implements ChatEngineApi {
+  private data: ChatData = empty()
+  private listeners = new Set<Listener>()
+  private started = false
+
+  subscribe(fn: Listener): () => void {
+    this.listeners.add(fn)
+    fn(this.data)
+    this.ensureStarted()
+    return () => this.listeners.delete(fn)
+  }
+
+  get(): ChatData {
+    return this.data
+  }
+
+  private emit() {
+    this.listeners.forEach((l) => l(this.data))
+  }
+
+  private ensureStarted() {
+    if (this.started) return
+    const db = getDb()
+    if (!db) return
+    this.started = true
+    const base = `rooms/${CHAT_ROOM_ID}`
+
+    onValue(query(ref(db, `${base}/messages`), limitToLast(MAX_MESSAGES)), (snap) => {
+      const messages: ChatMessage[] = []
+      snap.forEach((c) => {
+        const v = c.val() || {}
+        messages.push({ id: c.key as string, from: v.from, text: v.text, ts: v.ts || 0 })
+      })
+      messages.sort((a, b) => a.ts - b.ts)
+      this.data = { ...this.data, messages }
+      this.emit()
+    })
+
+    onValue(query(ref(db, `${base}/buzzes`), limitToLast(MAX_BUZZES)), (snap) => {
+      const buzzes: BuzzMark[] = []
+      snap.forEach((c) => {
+        const v = c.val() || {}
+        buzzes.push({ id: c.key as string, from: v.from, ts: v.ts || 0 })
+      })
+      buzzes.sort((a, b) => a.ts - b.ts)
+      this.data = { ...this.data, buzzes }
+      this.emit()
+    })
+  }
+
+  async send(from: Author, text: string) {
+    const db = getDb()
+    if (!db) return
+    await push(ref(db, `rooms/${CHAT_ROOM_ID}/messages`), { from, text, ts: Date.now() })
+  }
+
+  async buzz(from: Author) {
+    const db = getDb()
+    if (!db) return
+    await push(ref(db, `rooms/${CHAT_ROOM_ID}/buzzes`), { from, ts: Date.now() })
+  }
+}
+
+/** Cross-internet chat when Firebase is configured; on-device fallback otherwise. */
+export const chatEngine: ChatEngineApi = isFirebaseConfigured() ? new FirebaseChatEngine() : new LocalChatEngine()
