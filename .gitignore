@@ -9,8 +9,9 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# local data-server storage
-data/
+# local data-server storage (root only — an unanchored `data/` also swallowed
+# src/data/, which is the entire curriculum)
+/data/
 
 # TS incremental build info
 *.tsbuildinfo
