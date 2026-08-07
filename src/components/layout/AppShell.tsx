@@ -5,6 +5,9 @@ import { Loader2, X } from 'lucide-react'
 import { Sidebar } from './Sidebar'
 import { Topbar } from './Topbar'
 import { StudyMode } from '@/features/study/StudyMode'
+import { useCloudSync } from '@/services/cloudSync'
+import { useProgressPublisher } from '@/features/chat/useProgressPublisher'
+import { useReviewReceiver } from '@/features/chat/useReviewReceiver'
 
 function RouteFallback() {
   return (
@@ -16,6 +19,15 @@ function RouteFallback() {
 
 export function AppShell() {
   const [mobileOpen, setMobileOpen] = useState(false)
+
+  // Replicate progress/notes/exams/study/settings to Firebase so the same
+  // account resumes on any device.
+  useCloudSync()
+
+  // Learner ⇄ instructor sharing. Mounted at the shell, not inside Study Mode,
+  // so her work is published and his grading adopted on every page.
+  useProgressPublisher()
+  useReviewReceiver()
 
   return (
     <div className="flex h-screen overflow-hidden">

@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 import { STORAGE_KEYS, zustandStorage } from '@/services/storage'
+import { markInstructorDevice } from '@/services/deviceIdentity'
 import type { Author } from '@/types'
 
 export type Theme = 'light' | 'dark'
@@ -40,7 +41,13 @@ export const useSettingsStore = create<SettingsState>()(
         if (get().theme === 'dark') root.classList.add('dark')
         else root.classList.remove('dark')
       },
-      setRole: (role) => set({ role }),
+      setRole: (role) => {
+        // Once a browser has acted as Chính it is his: it stops publishing
+        // learner data, so it can never overwrite Phương's shared work with its
+        // own empty progress. Settings can hand the device back explicitly.
+        if (role === 'instructor') markInstructorDevice()
+        set({ role })
+      },
       setLearnerName: (learnerName) => set({ learnerName }),
       toggleSidebar: () => set({ sidebarCollapsed: !get().sidebarCollapsed }),
     }),
