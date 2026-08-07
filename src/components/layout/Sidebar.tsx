@@ -1,8 +1,9 @@
 import { NavLink, useNavigate } from 'react-router-dom'
-import { LayoutDashboard, Route as RouteIcon, StickyNote, FolderKanban, Award, Settings, PlayCircle, GraduationCap, FileQuestion } from 'lucide-react'
+import { LayoutDashboard, Route as RouteIcon, StickyNote, FolderKanban, Award, Settings, PlayCircle, GraduationCap, FileQuestion, UserCog } from 'lucide-react'
 import { curriculum } from '@/data/curriculum'
 import { useProgressStore } from '@/store/progressStore'
 import { useExamScores } from '@/store/examStore'
+import { useSettingsStore } from '@/store/settingsStore'
 import { computeOverall } from '@/lib/scoring'
 import { findCurrentLesson } from '@/lib/selectors'
 import { Progress } from '@/components/ui/Progress'
@@ -13,6 +14,8 @@ const NAV = [
   { to: '/roadmap', label: 'Roadmap', icon: RouteIcon },
   { to: '/exams', label: 'Exams', icon: FileQuestion },
   { to: '/notes', label: 'Notes', icon: StickyNote },
+  /** Chính's console for reviewing Phương's work — hidden while she's studying. */
+  { to: '/review', label: 'Review', icon: UserCog, instructorOnly: true },
   { to: '/portfolio', label: 'Portfolio', icon: FolderKanban },
   { to: '/certificate', label: 'Certificate', icon: Award },
   { to: '/settings', label: 'Settings', icon: Settings },
@@ -23,6 +26,8 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
   const lastLessonId = useProgressStore((s) => s.lastLessonId)
   const navigate = useNavigate()
   const examScores = useExamScores()
+  const role = useSettingsStore((s) => s.role)
+  const nav = NAV.filter((item) => !item.instructorOnly || role === 'instructor')
   const overall = computeOverall(curriculum, progress, examScores)
   const current = findCurrentLesson(curriculum, progress)
   const continueId = lastLessonId ?? current?.id
@@ -66,7 +71,7 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
       )}
 
       <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-2">
-        {NAV.map(({ to, label, icon: Icon, end }) => (
+        {nav.map(({ to, label, icon: Icon, end }) => (
           <NavLink
             key={to}
             to={to}

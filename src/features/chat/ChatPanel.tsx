@@ -7,7 +7,8 @@
 // ============================================================================
 
 import { useEffect, useRef, useState } from 'react'
-import { Send, Zap, GraduationCap, UserCog, CheckCircle2, ListChecks, FileText, BookOpen, StickyNote } from 'lucide-react'
+import { Link } from 'react-router-dom'
+import { Send, Zap, GraduationCap, UserCog, CheckCircle2, ListChecks, FileText, BookOpen, StickyNote, ClipboardCheck } from 'lucide-react'
 import { useSettingsStore } from '@/store/settingsStore'
 import { useStudyStore } from '@/store/studyStore'
 import { cn, roleName, displayName } from '@/lib/utils'
@@ -93,9 +94,17 @@ function LearnerWork() {
       <div className="grid grid-cols-4 gap-1.5">
         <Tile n={`${snap.hours}h`} l="Studied" />
         <Tile n={`${snap.streak}`} l="Streak" />
-        <Tile n={`${snap.quizzesPassed}`} l="Quizzes" />
+        <Tile n={`${(snap.exams ?? []).length}`} l="Exams" />
         <Tile n={`${snap.assignmentsSubmitted}`} l="Assign." />
       </div>
+
+      <Link
+        to="/review"
+        className="mt-2 flex items-center justify-center gap-1.5 rounded-lg bg-[hsl(var(--accent)/0.15)] px-3 py-1.5 text-[11px] font-semibold text-[hsl(var(--accent))] hover:bg-[hsl(var(--accent)/0.25)]"
+      >
+        <ClipboardCheck className="h-3.5 w-3.5" />
+        Review her exams & assignments
+      </Link>
 
       {/* Per-module progress */}
       <details className="mt-2">

@@ -26,7 +26,6 @@ import { ChatPanel } from '@/features/chat/ChatPanel'
 import { BuzzOverlay } from '@/features/chat/BuzzOverlay'
 import { useBuzzWatcher } from '@/features/chat/useBuzzWatcher'
 import { useMessageWatcher } from '@/features/chat/useMessageWatcher'
-import { useProgressPublisher } from '@/features/chat/useProgressPublisher'
 import { useChat } from '@/features/chat/useChat'
 import { usePomodoro } from './usePomodoro'
 import { PomodoroTimer } from './PomodoroTimer'
@@ -56,10 +55,9 @@ export function StudyMode() {
   const [open, setOpen] = useState(false)
   const [tab, setTab] = useState<PanelTab>('focus')
 
-  // --- chat + buzz + progress sharing --------------------------------------
+  // --- chat + buzz ---------------------------------------------------------
   useBuzzWatcher()
   useMessageWatcher()
-  useProgressPublisher()
   const chat = useChat()
   const chatRole = useSettingsStore((s) => s.role)
   const chatReadTs = useStudyStore((s) => s.chatReadTs)

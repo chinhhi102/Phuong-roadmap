@@ -10,6 +10,7 @@ const LessonPage = lazy(() => import('@/features/lessons/LessonPage'))
 const NotesPage = lazy(() => import('@/features/notes/NotesPage'))
 const ExamsPage = lazy(() => import('@/features/exams/ExamsPage'))
 const ExamPage = lazy(() => import('@/features/exams/ExamPage'))
+const ReviewPage = lazy(() => import('@/features/review/ReviewPage'))
 const PortfolioPage = lazy(() => import('@/features/portfolio/PortfolioPage'))
 const CertificatePage = lazy(() => import('@/features/certificate/CertificatePage'))
 const SettingsPage = lazy(() => import('@/features/settings/SettingsPage'))
@@ -24,6 +25,7 @@ export default function App() {
         <Route path="/exams" element={<ExamsPage />} />
         <Route path="/exam/:moduleId" element={<ExamPage />} />
         <Route path="/notes" element={<NotesPage />} />
+        <Route path="/review" element={<ReviewPage />} />
         <Route path="/portfolio" element={<PortfolioPage />} />
         <Route path="/certificate" element={<CertificatePage />} />
         <Route path="/settings" element={<SettingsPage />} />
