@@ -1,8 +1,13 @@
 name: Deploy to GitHub Pages
 
+# Manual only. Production is served from the gh-pages branch (Pages source =
+# "Deploy from a branch"), and `npm run deploy` publishes there — that is the
+# live deploy path. This workflow's deploy job uses actions/deploy-pages, which
+# only works once Pages source is switched to "GitHub Actions"; until then a
+# push trigger just fails on every commit. Switch that setting first, then add:
+#   push:
+#     branches: [master]
 on:
-  push:
-    branches: [master, main]
   workflow_dispatch:
 
 permissions:
